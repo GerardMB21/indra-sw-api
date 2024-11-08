@@ -127,6 +127,16 @@ app.get('/api/:service', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/api/:service/schema', async (req: Request, res: Response) => {
+  try {
+    const externalResponse = await axios.get(`https://swapi.py4e.com/api/${req.params.service}/schema`);
+
+    res.status(200).json(externalResponse.data);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 app.get('/api/:service/:id', async (req: Request, res: Response) => {
   try {
     if (req.params.service == "planets") {
@@ -175,17 +185,7 @@ app.get('/api/:service/:id', async (req: Request, res: Response) => {
       };
 
       res.status(200).json(newObj);
-    }
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-});
-
-app.get('/api/:service/schema', async (req: Request, res: Response) => {
-  try {
-    const externalResponse = await axios.get(`https://swapi.py4e.com/api/${req.params.service}/schema`);
-
-    res.status(200).json(externalResponse.data);
+    };
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -248,5 +248,11 @@ app.post("/api/planets", async (req, res) => {
     res.status(500).json({ error: "Could not create planet" });
   };
 });
+
+const notFoundMiddleware: any = (req: Request, res: Response, next: NextFunction): Response => {
+  return res.status(404).json({ error: "Not Found" });
+};
+
+app.use("/" , notFoundMiddleware);
 
 export const handler = serverless(app);

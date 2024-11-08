@@ -39,10 +39,16 @@ functions:
     events:
       - httpApi: "*"
 
+plugins:
+  - serverless-offline
+  # - serverless-plugin-typescript-express
+
 package:
   individually: true
 
 custom:
+  serverless-offline:
+    httpPort: 5178
   scripts:
     hooks:
       'before:package:createDeploymentArtifacts': npx tsc
